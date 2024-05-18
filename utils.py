@@ -24,8 +24,9 @@ def predict_and_visualize(model, data_loader, device):
 
             color_map = {
                 0: [0, 0, 0],       # 背景
-                1: [0, 128, 0],     # 矸石
-                2: [128, 0, 0]      # 煤
+                1: [128, 0, 0],      # 煤
+                2: [0, 128, 0],     # 矸石
+
             }
 
             for cls, color in color_map.items():
@@ -41,17 +42,17 @@ def predict_and_visualize(model, data_loader, device):
             result_image = Image.fromarray(image)
             draw = ImageDraw.Draw(result_image)
 
-            coal_count = np.sum(preds == 2)
-            gangue_count = np.sum(preds == 1)
+            coal_count = np.sum(preds == 1)
+            gangue_count = np.sum(preds == 2)
             total_count = coal_count + gangue_count  # 只计算煤和矸石的总数
             coal_ratio = coal_count / total_count if total_count > 0 else 0
 
             for y in range(0, preds.shape[0], 20):
                 for x in range(0, preds.shape[1], 20):
                     if preds[y, x] == 1:
-                        draw.rectangle([x, y, x+20, y+20], outline=(0, 128, 0))
-                    elif preds[y, x] == 2:
                         draw.rectangle([x, y, x+20, y+20], outline=(128, 0, 0))
+                    elif preds[y, x] == 2:
+                        draw.rectangle([x, y, x+20, y+20], outline=(0, 128, 0))
 
             processing_time = end_time - start_time
             result_image = result_image.resize((852, 480))
